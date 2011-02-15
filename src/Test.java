@@ -33,10 +33,7 @@ public class Test {
 		Suru suru = new Suru();
 		suru.init(p, 10, -4, 4, 0, 4);
 		suru.solve(2000, 1000);
-		
 		suru.degerleri_goster();
-		
-		
 		System.out.println("best:"+p.yayilma_zamani);
 		DisplayManager.show(p);
 		

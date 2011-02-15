@@ -2,8 +2,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.JFrame;
 
@@ -24,13 +27,17 @@ public class DisplayManager {
 	}
 
 }
-class ScheduleComponent extends Component {
+class ScheduleComponent extends Container {
 	
 	private AltIsFrame alt_isler[];
 	private double x_carpan;
 	private double y_carpan;
 	private int yayilma_zamani;
 	private int makine_sayisi;
+	public ScheduleComponent() {
+		setLayout(new BorderLayout());
+		add(table,BorderLayout.CENTER);
+	}
 	private static Color colors[]={
 			Color.black,	
 			Color.red,	
@@ -40,21 +47,47 @@ class ScheduleComponent extends Component {
 			Color.CYAN,	
 			Color.green,
 		};
-	public void paint(Graphics g) {
-		g.setColor(Color.WHITE);
-		int w = getWidth();
-		int h = getHeight();
-		g.fillRect(0, 0, w, h);
-		if (yayilma_zamani != 0){
-			x_carpan = getWidth()/((double)yayilma_zamani);
-			y_carpan = getHeight() / ((double)makine_sayisi);
-			for (int i = 0; alt_isler != null && i < alt_isler.length; i++) {
-				if (alt_isler[i] != null){
-					alt_isler[i].draw(g);
+	private Component table = new Component(){
+		public void paint(Graphics g) {
+			System.out.println("paii:");
+			int w = getWidth();
+			int h = getHeight();
+			g.setColor(Color.WHITE);
+			g.fillRect(0, 0, w, h);
+			if (yayilma_zamani == 0){
+				return;
+			}
+			Font font = g.getFont();
+			Graphics2D g2 = (Graphics2D)g;
+			String txt = (makine_sayisi+1)+". makine";
+			Rectangle2D r = font.getStringBounds(txt, 0, txt.length(), g2.getFontRenderContext());
+			
+			
+			for (int i = 0; i < makine_sayisi; i++) {
+				g.setColor(Color.black);
+				g.drawString((i+1)+". makine", 5, (h/makine_sayisi)*(i+1));
+				g.drawLine(0, (h/makine_sayisi)*(i+1), getWidth(), (h/makine_sayisi)*(i+1));
+			}
+			System.out.println(">>:"+r.getWidth());
+			int translate = (int)r.getWidth()+10;
+			
+			w -= translate;
+			
+			if (yayilma_zamani != 0){
+				x_carpan = w/((double)yayilma_zamani);
+				y_carpan = h / ((double)makine_sayisi);
+				for (int i = 0; alt_isler != null && i < alt_isler.length; i++) {
+					if (alt_isler[i] != null){
+						g.translate(translate, 0);
+						alt_isler[i].draw(g);
+						g.translate(-translate, 0);
+					}
 				}
 			}
 		}
-	}
+	};
+	
+	
 	public void update(Problem problem){
 		alt_isler = new AltIsFrame[problem.makine_sayisi * problem.is_sayisi];
 		int counter = 0;
@@ -73,6 +106,8 @@ class ScheduleComponent extends Component {
 				counter++;
 			}
 		}
+		table.invalidate();
+		table.repaint();
 		invalidate();
 		repaint();
 	}
@@ -172,4 +207,5 @@ class ScheduleComponent extends Component {
 			}
 		}
 	}
+	
 }
