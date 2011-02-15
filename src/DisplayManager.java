@@ -6,6 +6,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JFrame;
@@ -48,8 +51,31 @@ class ScheduleComponent extends Container {
 			Color.green,
 		};
 	private Component table = new Component(){
+		private boolean rows[];
+		
+		{
+			addMouseMotionListener(new MouseMotionListener() {
+				
+				public void mouseMoved(MouseEvent e) {
+				}
+				public void mouseDragged(MouseEvent arg0) {
+				}
+			});
+			addMouseListener(new MouseListener() {
+				public void mouseReleased(MouseEvent e) {
+				}
+				public void mousePressed(MouseEvent e) {
+				}
+				public void mouseExited(MouseEvent e) {
+				}
+				public void mouseEntered(MouseEvent e) {
+				}
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+		}
+		
 		public void paint(Graphics g) {
-			System.out.println("paii:");
 			int w = getWidth();
 			int h = getHeight();
 			g.setColor(Color.WHITE);
@@ -62,15 +88,21 @@ class ScheduleComponent extends Container {
 			String txt = (makine_sayisi+1)+". makine";
 			Rectangle2D r = font.getStringBounds(txt, 0, txt.length(), g2.getFontRenderContext());
 			
+			if (rows == null || rows.length != makine_sayisi){
+				rows = new boolean[makine_sayisi];
+			} else {
+				for (int i = 0; i < rows.length; i++) {
+					rows[i] = false;
+				}
+			}
+			
 			
 			for (int i = 0; i < makine_sayisi; i++) {
 				g.setColor(Color.black);
-				g.drawString((i+1)+". makine", 5, (h/makine_sayisi)*(i+1));
-				g.drawLine(0, (h/makine_sayisi)*(i+1), getWidth(), (h/makine_sayisi)*(i+1));
+				g.drawString((i+1)+". makine", 5, (h/makine_sayisi)*(i)+(h/makine_sayisi)/2 );
+			//	g.drawLine(0, (h/makine_sayisi)*(i+1), getWidth(), (h/makine_sayisi)*(i+1));
 			}
-			System.out.println(">>:"+r.getWidth());
 			int translate = (int)r.getWidth()+10;
-			
 			w -= translate;
 			
 			if (yayilma_zamani != 0){
@@ -81,6 +113,10 @@ class ScheduleComponent extends Container {
 						g.translate(translate, 0);
 						alt_isler[i].draw(g);
 						g.translate(-translate, 0);
+						g.setColor(Color.black);
+						g.setClip(0,0,getWidth(),getHeight());
+						int y = (int)(alt_isler[i].makine * y_carpan);
+						g.drawLine(0, y, getWidth(), y);
 					}
 				}
 			}
