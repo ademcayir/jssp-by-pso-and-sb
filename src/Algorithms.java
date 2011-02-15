@@ -2,6 +2,8 @@ import javax.jws.Oneway;
 import javax.swing.text.GapContent;
 
 
+
+
 public class Algorithms {
 	public static void localSearch2(Problem problem,int cozum[],int tmp[]){
 		for (int i = 0; i < tmp.length; i++) {
