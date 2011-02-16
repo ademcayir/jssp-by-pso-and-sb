@@ -5,6 +5,8 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Polygon;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -15,20 +17,16 @@ import javax.swing.JFrame;
 
 
 public class DisplayManager {
-	private static JFrame frame;
 	private static ScheduleComponent scheduleComponent;
-	public static void show(Problem problem){
-		if (frame == null){
-			frame = new JFrame();
-			scheduleComponent = new ScheduleComponent();
-			frame.add(scheduleComponent,BorderLayout.CENTER);
-			frame.setSize(600, 400);
-		}
+	public static void update(Problem problem){
 		scheduleComponent.update(problem);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-
+	public static Container getScheduleScreen(){
+		if (scheduleComponent== null){
+			scheduleComponent = new ScheduleComponent();
+		}
+		return scheduleComponent;
+	}
 }
 class ScheduleComponent extends Container {
 	
@@ -38,8 +36,22 @@ class ScheduleComponent extends Container {
 	private int yayilma_zamani;
 	private int makine_sayisi;
 	public ScheduleComponent() {
-		setLayout(new BorderLayout());
-		add(table,BorderLayout.CENTER);
+		setLayout(new GridBagLayout());
+		GridBagConstraints g = new GridBagConstraints();
+		g.gridx = 0;
+		g.gridy = 0;
+		g.weightx = 1;
+		g.weighty = 5;
+		g.fill = GridBagConstraints.BOTH;
+		add(table,g);
+		
+		g = new GridBagConstraints();
+		g.gridx = 0;
+		g.gridy = 1;
+		g.weightx = 1;
+		g.weighty = 1;
+		g.fill = GridBagConstraints.BOTH;
+		add(info,g);
 	}
 	private static Color colors[]={
 			Color.black,	
@@ -50,31 +62,51 @@ class ScheduleComponent extends Container {
 			Color.CYAN,	
 			Color.green,
 		};
+	private Component info = new Component(){
+		public void paint(Graphics g) {
+			g.setColor(Color.white);
+			g.fillRect(0, 0, getWidth(), getHeight());
+			if (alt_isler == null){
+				return;
+			}
+			int satir = ((makine_sayisi-1)/10)+1;
+			Graphics2D g2 = (Graphics2D)g;
+			Font f = g.getFont();
+			int is_sayisi = alt_isler.length/makine_sayisi;
+			String txt = (is_sayisi+1)+". İş";
+			Rectangle2D r2 = f.getStringBounds(txt,0 , txt.length(), g2.getFontRenderContext());
+			int t_w = (int)r2.getWidth()+10;
+			int cell_w = getWidth()/10 - t_w;
+			int cell_h = getHeight()/(satir) - 4;
+			int cur_x = 2;
+			int cur_y = 2;
+			g.setColor(Color.black);
+			g.drawLine(0, 1, getWidth(), 1);
+			for (int i = 0; i < satir; i++) {
+				for (int j = 0; j < 10; j++) {
+					int index = i*10+j;
+					if (index >= is_sayisi){
+						break;
+					}
+					AltIsFrame a = new AltIsFrame();
+					a.is = index;
+					int c_h = cell_h;
+					if (c_h > (r2.getHeight()*5)/3){
+						c_h = (int)(r2.getHeight()*5)/3;
+					}
+					a.draw(g, cur_x, cur_y, cell_w, c_h);
+					g.setColor(Color.black);
+					g.setClip(0, 0, getWidth(), getHeight());
+					g.drawString((index+1)+". İş", cur_x+cell_w+2, cur_y+(int)r2.getHeight());
+					cur_x += t_w+cell_w;
+				}
+				cur_y += cell_h;
+				cur_x = 2;
+			}
+		};
+	};
 	private Component table = new Component(){
 		private boolean rows[];
-		
-		{
-			addMouseMotionListener(new MouseMotionListener() {
-				
-				public void mouseMoved(MouseEvent e) {
-				}
-				public void mouseDragged(MouseEvent arg0) {
-				}
-			});
-			addMouseListener(new MouseListener() {
-				public void mouseReleased(MouseEvent e) {
-				}
-				public void mousePressed(MouseEvent e) {
-				}
-				public void mouseExited(MouseEvent e) {
-				}
-				public void mouseEntered(MouseEvent e) {
-				}
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-		}
-		
 		public void paint(Graphics g) {
 			int w = getWidth();
 			int h = getHeight();
@@ -95,12 +127,9 @@ class ScheduleComponent extends Container {
 					rows[i] = false;
 				}
 			}
-			
-			
 			for (int i = 0; i < makine_sayisi; i++) {
 				g.setColor(Color.black);
 				g.drawString((i+1)+". makine", 5, (h/makine_sayisi)*(i)+(h/makine_sayisi)/2 );
-			//	g.drawLine(0, (h/makine_sayisi)*(i+1), getWidth(), (h/makine_sayisi)*(i+1));
 			}
 			int translate = (int)r.getWidth()+10;
 			w -= translate;
@@ -159,6 +188,10 @@ class ScheduleComponent extends Container {
 			int y = (int)(makine * y_carpan);
 			int w = (int)(sure * x_carpan);
 			int h = (int)y_carpan;
+			draw(g,x,y,w,h);
+		}
+		
+		void draw(Graphics g,int x,int y,int w,int h){
 			
 			g.setClip(x, y, w, h);	
 			if (is < colors.length){

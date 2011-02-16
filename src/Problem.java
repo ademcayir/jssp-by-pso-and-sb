@@ -10,6 +10,7 @@ public class Problem {
 	public int makine_sayisi;
 	public int is_sayisi;
 	public int yayilma_zamani;
+	public long en_iyi_cozum_zamani;
 	public Problem(){
 	}
 	public int getBoyutSayisi(){

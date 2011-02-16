@@ -3,46 +3,89 @@ import java.util.Vector;
 
 
 public class Test {
-	public static void main(String[] args) {
-		InputStream input = "".getClass().getResourceAsStream("/problem_abz5");
-		Problem p = new Problem();
-		p.parse(input);
-		try {
-			input.close();
-		} catch (Exception e) {
-		}
-		p.goster();
-		//Ybs.ybs(p);
-		
-		
-		int cozum[] = new int[p.makine_sayisi*p.is_sayisi];
-		
-//		cozum = new int[]{
-//				2,2,4,1,
-//				4,5,0,3,
-//				2,0,3,5,
-//				5,5,0,4,
-//				2,4,3,0,
-//				3,1,1,1
-//		};
-		
-//		cozum = new int[]{
-//			0, 4, 3, 5, 1 ,4 ,1, 5, 2, 2, 5, 1, 0, 3, 0, 3, 5, 4, 3, 0, 4, 2, 1, 2,
-//		};
-		
-		Suru suru = new Suru();
-		suru.init(p, 10, -4, 4, 0, 4);
-		suru.solve(2000, 1000);
-		suru.degerleri_goster();
-		System.out.println("best:"+p.yayilma_zamani);
-		DisplayManager.show(p);
-		
-//		Suru suru = new Suru();
-//		suru.init(p, 10, -4, 4, 0, 4);
-//		suru.solve(10000, 10000);
-//		cozum = suru.getBest();
-//		int tmp[] = new int[cozum.length];
-//		Algorithms.localSearch2(p, cozum,tmp);
-//		p.sirayi_goster();
-	}
+	public static final String names[][] = {
+		{ "instance_ornek.txt","13"},
+		{ "instance_abz5.txt","1234"},
+		{ "instance_abz7.txt","667"},
+		{ "instance_abz8.txt","670"},
+		{ "instance_abz9.txt","691"},
+		{ "instance_ft06.txt",""},
+		{ "instance_ft10.txt","930"},
+		{ "instance_ft20.txt",""},
+		{ "instance_la01.txt","666"},
+		{ "instance_la02.txt","655"},
+		{ "instance_la03.txt","597"},
+		{ "instance_la04.txt","590"},
+		{ "instance_la05.txt","593"},
+		{ "instance_la06.txt","926"},
+		{ "instance_la07.txt","890"},
+		{ "instance_la08.txt","863"},
+		{ "instance_la09.txt","951"},
+		{ "instance_la10.txt","958"},
+		{ "instance_la11.txt",""},
+		{ "instance_la12.txt",""},
+		{ "instance_la13.txt",""},
+		{ "instance_la14.txt",""},
+		{ "instance_la15.txt",""},
+		{ "instance_la16.txt","945"},
+		{ "instance_la17.txt","784"},
+		{ "instance_la18.txt","848"},
+		{ "instance_la19.txt","842"},
+		{ "instance_la20.txt","902"},
+		{ "instance_la21.txt",""},
+		{ "instance_la22.txt",""},
+		{ "instance_la23.txt",""},
+		{ "instance_la24.txt",""},
+		{ "instance_la25.txt","902"},
+		{ "instance_la26.txt",""},
+		{ "instance_la27.txt",""},
+		{ "instance_la28.txt","1216"},
+		{ "instance_la29.txt","1195"},
+		{ "instance_la30.txt",""},
+		{ "instance_la31.txt",""},
+		{ "instance_la32.txt",""},
+		{ "instance_la33.txt",""},
+		{ "instance_la34.txt",""},
+		{ "instance_la35.txt","1888"},
+		{ "instance_la36.txt","1268"},
+		{ "instance_la37.txt",""},
+		{ "instance_la38.txt","1217"},
+		{ "instance_la39.txt","1233"},
+		{ "instance_la40.txt","1222"},
+		{ "instance_orb01.txt",""},
+		{ "instance_orb02.txt","888"},
+		{ "instance_orb03.txt","1005"},
+		{ "instance_orb04.txt","1005"},
+		{ "instance_orb05.txt",""},
+		{ "instance_orb06.txt",""},
+		{ "instance_orb07.txt",""},
+		{ "instance_orb08.txt",""},
+		{ "instance_orb09.txt",""},
+		{ "instance_orb10.txt",""},
+		{ "instance_swv01.txt",""},
+		{ "instance_swv02.txt",""},
+		{ "instance_swv03.txt",""},
+		{ "instance_swv04.txt",""},
+		{ "instance_swv05.txt",""},
+		{ "instance_swv06.txt",""},
+		{ "instance_swv07.txt",""},
+		{ "instance_swv08.txt",""},
+		{ "instance_swv09.txt",""},
+		{ "instance_swv10.txt",""},
+		{ "instance_swv11.txt",""},
+		{ "instance_swv12.txt",""},
+		{ "instance_swv13.txt",""},
+		{ "instance_swv14.txt",""},
+		{ "instance_swv15.txt",""},
+		{ "instance_swv16.txt",""},
+		{ "instance_swv17.txt",""},
+		{ "instance_swv18.txt",""},
+		{ "instance_swv19.txt",""},
+		{ "instance_swv20.txt",""},
+		{ "instance_yn1.txt",""},
+		{ "instance_yn2.txt",""},
+		{ "instance_yn3.txt",""},
+		{ "instance_yn4.txt",""},
+
+	};
 }
