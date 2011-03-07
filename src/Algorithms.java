@@ -1,17 +1,15 @@
-import javax.jws.Oneway;
-import javax.swing.text.GapContent;
+import java.util.Random;
+
 
 
 
 
 public class Algorithms {
-	public static void localSearch2(Problem problem,int cozum[],int tmp[]){
-		for (int i = 0; i < tmp.length; i++) {
-			tmp[i] = cozum[i]/problem.makine_sayisi;
-		}
-		localSearch(problem, tmp);
-	}
-	public static void localSearch(Problem problem,int cozum[]){
+	
+	public static Random random = new Random();
+	
+	
+	public static void localSearch(Problem problem,int is_sirasi[],int makine_sirasi[]){
 		for (int i = 0; i < problem.isler.length; i++) {
 			AltIs baslangic = problem.isler[i].baslangic;
 			while (baslangic.is_icin_sonrasi != null){
@@ -23,16 +21,21 @@ public class Algorithms {
 		}
 		AltIs makinedeki_son_is[] = new AltIs[problem.makine_sayisi];
 		int isler_son_zaman[] = new int[problem.is_sayisi];
-		for (int i = 0; i < cozum.length; i++) {
+		for (int i = 0; i < is_sirasi.length; i++) {
 //			System.out.println("suanda["+i+"]"+cozum[i]);
 //			if (i == 14){
 //				System.out.println("--");
 //			}
-			AltIs siradaki_is = problem.isler[cozum[i]].siralanmamis_ilk_eleman();
-			int siradaki_isin_bir_onceki_is_bitis_zamani = 0;
+			int cozum_is = is_sirasi[i] / problem.makine_sayisi;
+			AltIs siradaki_is = problem.isler[cozum_is].siralanmamis_ilk_eleman();
 			if (siradaki_is == null){
-				System.out.println(">>>>:siradi is null");
+				System.out.println(">>>>:siradi is null::"+i+">>"+Algorithms.getArrayString(is_sirasi));
+				System.out.println();
 			}
+			if (makine_sirasi != null ){
+				makine_sirasi[i] = siradaki_is.makine;
+			}
+			int siradaki_isin_bir_onceki_is_bitis_zamani = 0;
 			if (siradaki_is.is_icin_oncesi == null){
 				System.out.println("is icin oncesi nulll");
 			}
@@ -160,6 +163,110 @@ public class Algorithms {
 		for (int i = 0; i < x.length; i++) {
 			x[i] -= 1000000;
 		}
+	}
+	public static void apply_SB(Problem problem, int is_sirasi[],int makine_sirasi[], double x[],double v[]){
+		int bottleneck = findBotteneck(problem, is_sirasi);
+		int start = 0;
+		int end = 0;
+		int is_sirasi_temp[] = clone(is_sirasi);
+		int makine_sirasi_temp[] = clone(makine_sirasi);
+		double x_temp[] = clone(x);
+		double v_temp[] = clone(v);
+		int yayilma_zamani = problem.yayilma_zamani;
+		for (int i =0; i < makine_sirasi.length;i++){
+			if (makine_sirasi[i] == bottleneck){
+				end = i;
+				if (end - start > 1){
+					System.out.print("st:"+start+","+end+" >> ");
+					for (int j = start; j < end; j++) {
+						int t = Math.abs(Algorithms.random.nextInt() % (end - start)) + start;
+						swap(is_sirasi_temp, j, t);
+						swap(x_temp, j, t);
+						swap(v_temp, j, t);
+						System.out.print("[("+is_sirasi_temp[j]+","+is_sirasi_temp[t]+")("+j+","+t+")]");
+					}
+					System.out.println();
+				}
+				start = end+1;
+			}
+		}
+		Algorithms.localSearch(problem, is_sirasi_temp, makine_sirasi);
+		if (problem.yayilma_zamani < yayilma_zamani){
+			System.arraycopy(is_sirasi_temp, 0, is_sirasi, 0, is_sirasi.length);
+			System.arraycopy(x_temp, 0, x, 0, x.length);
+			System.arraycopy(v_temp, 0, v, 0, v.length);
+			System.out.println("değiştii:::"+yayilma_zamani+","+problem.yayilma_zamani);
+			System.out.println(":>>"+Algorithms.getArrayString(is_sirasi));
+		} else {
+			System.out.println("değişmedi");
+		}
+	}
+	
+	private static void swap(double a[],int i,int j){
+		double tmp = a[i];
+		a[i] = a[j];
+		a[j] = tmp;
+	}
+	private static void swap(int a[],int i,int j){
+		int tmp = a[i];
+		a[i] = a[j];
+		a[j] = tmp;
+	}
+	private static int[] clone(int a[]){
+		int t[] = new int[a.length];
+		System.arraycopy(a, 0, t, 0, t.length);
+		return t;
+	}
+	private static double[] clone(double a[]){
+		double t[] = new double[a.length];
+		System.arraycopy(a, 0, t, 0, t.length);
+		return t;
+	}
+	
+	
+	private static int findBotteneck(Problem problem, int current_order[]){
+		AltIs makine_isler_baslangiclar[] = new AltIs[problem.makine_sayisi];
+		AltIs temp_alt_is = problem.isler[0].baslangic;
+		while (temp_alt_is.is_icin_sonrasi != null){
+			temp_alt_is = temp_alt_is.is_icin_sonrasi;
+			makine_isler_baslangiclar[temp_alt_is.makine] = temp_alt_is;
+			while (makine_isler_baslangiclar[temp_alt_is.makine].makine_icin_oncesi != null){
+				makine_isler_baslangiclar[temp_alt_is.makine] = makine_isler_baslangiclar[temp_alt_is.makine].makine_icin_oncesi;
+			}
+		}
+		int baslangiclar[] = new int[problem.makine_sayisi];
+		int bitisler[] = new int[problem.makine_sayisi];
+		int sureler[] = new int[problem.makine_sayisi];
+//		System.out.println("------------------");
+		for (int i = 0; i < makine_isler_baslangiclar.length; i++) {
+			temp_alt_is = makine_isler_baslangiclar[i];
+			boolean baslangic = true;
+//			System.out.print("makine:"+i+">");
+			while (temp_alt_is != null){
+				if (baslangic){
+					baslangiclar[i] = temp_alt_is.baslangic_zamani;
+					baslangic = false;
+				}
+				bitisler[i] = temp_alt_is.baslangic_zamani+temp_alt_is.sure;
+				sureler[i] += temp_alt_is.sure;
+//				System.out.print(temp_alt_is+",");
+				temp_alt_is = temp_alt_is.makine_icin_sonrasi; 
+			}
+//			System.out.println();
+		}
+		int target=0;
+		int bosluk = 0;
+		
+		for (int i = 0; i < sureler.length; i++) {
+			int tmp = bitisler[i] - baslangiclar[i] - sureler[i];
+			if (tmp > bosluk){
+				bosluk = tmp;
+				target = i;
+			}
+//			System.out.println("Makine="+i+", baslangic="+baslangiclar[i]+", sure="+sureler[i]+", bitis="+bitisler[i]+", boşluk="+(bitisler[i] - baslangiclar[i] - sureler[i]));
+		}
+//		System.out.println("----");	
+		return target;
 	}
 	
 	public static String getArrayString(double array[]){

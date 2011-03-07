@@ -89,7 +89,7 @@ class Suru {
 		cozum.iterasyon_sayisi = j;
 		cozum.toplam_zaman = System.currentTimeMillis() - baslangic_zamani;
 		PSOScreen.instance().pso_set_current_percent(100);
-		Algorithms.localSearch2(problem, global_best_order, temp);
+		Algorithms.localSearch(problem, global_best_order,new int[problem.getBoyutSayisi()]);
 		stop = true;
 	}
 	private void calculate_global_best(int step){

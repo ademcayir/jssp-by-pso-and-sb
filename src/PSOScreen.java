@@ -82,7 +82,7 @@ public class PSOScreen extends JApplet {
 		con1.add(DisplayManager.getScheduleScreen(),g);
 		
 		setVisible(true);
-		setSize(800,600);
+		setSize(1000,800);
 	}
 	public void pso_started(){
 		coz.setEnabled(false);
@@ -245,6 +245,7 @@ public class PSOScreen extends JApplet {
 			}
 			genel_problemler.addItem(new ComboItem(name,i));
 		}
+		genel_problemler.setSelectedIndex(1);
 		genel_problemler.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				problem_isimlerini_tekrar_belirle();
@@ -348,13 +349,14 @@ public class PSOScreen extends JApplet {
 		
 		iterasyon_sayisi = new JComboBox();
 		iterasyon_sayisi.addItem(new ComboItem("Kısıt Yok",-1));
+		iterasyon_sayisi.addItem(new ComboItem("2 İterasyon",2));
 		iterasyon_sayisi.addItem(new ComboItem("10 İterasyon",10));
 		iterasyon_sayisi.addItem(new ComboItem("50 İterasyon",50));
 		iterasyon_sayisi.addItem(new ComboItem("100 İterasyon",100));
 		iterasyon_sayisi.addItem(new ComboItem("1000 İterasyon",1000));
 		iterasyon_sayisi.addItem(new ComboItem("10000 İterasyon",10000));
 		iterasyon_sayisi.addItem(new ComboItem("50000 İterasyon",50000));
-		iterasyon_sayisi.setSelectedIndex(4);
+		iterasyon_sayisi.setSelectedIndex(5);
 		
 		g = new GridBagConstraints();
 		g.gridx = 0;
@@ -471,7 +473,11 @@ public class PSOScreen extends JApplet {
 		if (Test.names[index][1].equals("")){
 			bilinen_en_iyi_cozum_yayilma_zamani.setText("Bilinen En İyi Yayılma Zamanı: (Henüz Bilinmiyor)");
 		} else {
-			bilinen_en_iyi_cozum_yayilma_zamani.setText("Bilinen En İyi Yayılma Zamanı: "+Test.names[index][1]);
+			if (Test.names[index].length == 4){
+				bilinen_en_iyi_cozum_yayilma_zamani.setText("Bilinen En İyi Yayılma Zamanı: "+Test.names[index][1]+", YBS İle: "+Test.names[index][2]+", GRASP İle: "+Test.names[index][3]);
+			} else {
+				bilinen_en_iyi_cozum_yayilma_zamani.setText("Bilinen En İyi Yayılma Zamanı: "+Test.names[index][1]);
+			}
 		}
 		PSOScreen.instance().pso_set_name(((ComboItem)genel_problemler.getSelectedItem()).lbl);
 		PSO.instance().setDosyayaYaz(dosyaya_yaz.isSelected());

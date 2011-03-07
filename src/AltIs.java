@@ -13,4 +13,9 @@ public class AltIs {
 		this.sure = sure;
 		this.parent = parent; 
 	}
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("AltIs[makine="+makine+", süre="+sure+", baslangic_zamani="+baslangic_zamani+", parent="+parent.is_no+"]");
+		return buf.toString();
+	}
 }

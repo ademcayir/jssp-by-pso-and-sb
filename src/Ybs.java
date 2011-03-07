@@ -12,11 +12,11 @@ public class Ybs {
 		randomize(antijen, problem.makine_sayisi);
 		int copy_antijen[] = new int[antijen.length];
 		System.arraycopy(antijen, 0, copy_antijen, 0, antijen.length);
-		Algorithms.localSearch(problem, antijen);
+		Algorithms.localSearch(problem, antijen,null);
 		int makespan = problem.yayilma_zamani;
 		for (int i = 0; i < ITERATION_NUM; i++) {
 			randomize(copy_antijen, problem.makine_sayisi);
-			Algorithms.localSearch(problem, antijen);
+			Algorithms.localSearch(problem, antijen,null);
 			if (makespan < problem.yayilma_zamani){
 				makespan = problem.yayilma_zamani;
 				System.out.println("iyi cozum bulundu:"+problem.yayilma_zamani);
