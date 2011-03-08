@@ -7,7 +7,8 @@ import java.util.Random;
 public class Algorithms {
 	
 	public static Random random = new Random();
-	
+	private static boolean temp_full_list[];
+	private static boolean temp_makine_list[];
 	
 	public static void localSearch(Problem problem,int is_sirasi[],int makine_sirasi[]){
 		for (int i = 0; i < problem.isler.length; i++) {
@@ -147,58 +148,69 @@ public class Algorithms {
 //		System.out.println("SPV: from > "+from);
 //		System.out.println("SPV: order > "+getArrayString(order));
 //		System.out.println("SPV: x     > "+getArrayString(x));
+
+		if (temp_full_list == null || temp_full_list.length != x.length){
+			temp_full_list = new boolean[x.length];
+		}
+		for (int i = 0; i < temp_full_list.length; i++) {
+			temp_full_list[i] = false;
+		}
 		
+		boolean min_set;
 		for (int i = 0; i < order.length; i++) {
 			double min = 1000;
 			int target=0;
+			min_set = false;
 			for (int j = 0; j < x.length; j++) {
-				if (j == 0 || x[j] < min){
+				if (!temp_full_list[j] && (!min_set || x[j] < min)){
+					min_set = true;
 					target = j;
 					min = x[j];
 				}
 			}
-			x[target] += 1000000;
 			order[i] = target;
-		}
-		for (int i = 0; i < x.length; i++) {
-			x[i] -= 1000000;
+			temp_full_list[target] = true;
 		}
 	}
 	public static void apply_SB(Problem problem, int is_sirasi[],int makine_sirasi[], double x[],double v[]){
-		int bottleneck = findBotteneck(problem, is_sirasi);
-		int start = 0;
-		int end = 0;
+		if (temp_makine_list == null || temp_makine_list.length != problem.makine_sayisi){
+			temp_makine_list = new boolean[problem.makine_sayisi];
+		}
+		for (int i = 0; i < temp_makine_list.length; i++) {
+			temp_makine_list[i] = false;
+		}
 		int is_sirasi_temp[] = clone(is_sirasi);
 		int makine_sirasi_temp[] = clone(makine_sirasi);
 		double x_temp[] = clone(x);
 		double v_temp[] = clone(v);
-		int yayilma_zamani = problem.yayilma_zamani;
-		for (int i =0; i < makine_sirasi.length;i++){
-			if (makine_sirasi[i] == bottleneck){
-				end = i;
-				if (end - start > 1){
-					System.out.print("st:"+start+","+end+" >> ");
-					for (int j = start; j < end; j++) {
-						int t = Math.abs(Algorithms.random.nextInt() % (end - start)) + start;
-						swap(is_sirasi_temp, j, t);
-						swap(x_temp, j, t);
-						swap(v_temp, j, t);
-						System.out.print("[("+is_sirasi_temp[j]+","+is_sirasi_temp[t]+")("+j+","+t+")]");
+		System.out.println("--");
+		for (int k = 0; k < problem.makine_sayisi;k++){
+			int bottleneck = findBotteneck(problem, is_sirasi,temp_makine_list);
+			temp_makine_list[bottleneck] = true;
+			System.out.println("bottleneck:"+bottleneck);
+			int start = 0;
+			int end = 0;
+			int yayilma_zamani = problem.yayilma_zamani;
+			for (int i =0; i < makine_sirasi.length;i++){
+				if (makine_sirasi[i] == bottleneck){
+					end = i;
+					if (end - start > 1){
+						for (int j = start; j < end; j++) {
+							int t = Math.abs(Algorithms.random.nextInt() % (end - start)) + start;
+							swap(is_sirasi_temp, j, t);
+							swap(x_temp, j, t);
+							swap(v_temp, j, t);
+						}
 					}
-					System.out.println();
+					start = end+1;
 				}
-				start = end+1;
 			}
-		}
-		Algorithms.localSearch(problem, is_sirasi_temp, makine_sirasi);
-		if (problem.yayilma_zamani < yayilma_zamani){
-			System.arraycopy(is_sirasi_temp, 0, is_sirasi, 0, is_sirasi.length);
-			System.arraycopy(x_temp, 0, x, 0, x.length);
-			System.arraycopy(v_temp, 0, v, 0, v.length);
-			System.out.println("değiştii:::"+yayilma_zamani+","+problem.yayilma_zamani);
-			System.out.println(":>>"+Algorithms.getArrayString(is_sirasi));
-		} else {
-			System.out.println("değişmedi");
+			Algorithms.localSearch(problem, is_sirasi_temp, makine_sirasi);
+			if (problem.yayilma_zamani < yayilma_zamani){
+				System.arraycopy(is_sirasi_temp, 0, is_sirasi, 0, is_sirasi.length);
+				System.arraycopy(x_temp, 0, x, 0, x.length);
+				System.arraycopy(v_temp, 0, v, 0, v.length);
+			}
 		}
 	}
 	
@@ -224,7 +236,7 @@ public class Algorithms {
 	}
 	
 	
-	private static int findBotteneck(Problem problem, int current_order[]){
+	private static int findBotteneck(Problem problem, int current_order[],boolean ignore_makine_list[]){
 		AltIs makine_isler_baslangiclar[] = new AltIs[problem.makine_sayisi];
 		AltIs temp_alt_is = problem.isler[0].baslangic;
 		while (temp_alt_is.is_icin_sonrasi != null){
@@ -237,11 +249,9 @@ public class Algorithms {
 		int baslangiclar[] = new int[problem.makine_sayisi];
 		int bitisler[] = new int[problem.makine_sayisi];
 		int sureler[] = new int[problem.makine_sayisi];
-//		System.out.println("------------------");
 		for (int i = 0; i < makine_isler_baslangiclar.length; i++) {
 			temp_alt_is = makine_isler_baslangiclar[i];
 			boolean baslangic = true;
-//			System.out.print("makine:"+i+">");
 			while (temp_alt_is != null){
 				if (baslangic){
 					baslangiclar[i] = temp_alt_is.baslangic_zamani;
@@ -249,24 +259,28 @@ public class Algorithms {
 				}
 				bitisler[i] = temp_alt_is.baslangic_zamani+temp_alt_is.sure;
 				sureler[i] += temp_alt_is.sure;
-//				System.out.print(temp_alt_is+",");
 				temp_alt_is = temp_alt_is.makine_icin_sonrasi; 
 			}
-//			System.out.println();
 		}
-		int target=0;
+		int target_bosluk=0;
 		int bosluk = 0;
-		
+		int target_yayilma_zamani=0;
+		int yayilma_zamani = 0;
 		for (int i = 0; i < sureler.length; i++) {
+			if (ignore_makine_list[i]){
+				continue;
+			}
 			int tmp = bitisler[i] - baslangiclar[i] - sureler[i];
 			if (tmp > bosluk){
 				bosluk = tmp;
-				target = i;
+				target_bosluk = i;
 			}
-//			System.out.println("Makine="+i+", baslangic="+baslangiclar[i]+", sure="+sureler[i]+", bitis="+bitisler[i]+", boşluk="+(bitisler[i] - baslangiclar[i] - sureler[i]));
+			if (bitisler[i] > yayilma_zamani){
+				yayilma_zamani = bitisler[i];
+				target_yayilma_zamani = i;
+			}
 		}
-//		System.out.println("----");	
-		return target;
+		return target_yayilma_zamani;
 	}
 	
 	public static String getArrayString(double array[]){

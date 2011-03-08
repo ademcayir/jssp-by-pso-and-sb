@@ -90,6 +90,12 @@ class Suru {
 		cozum.toplam_zaman = System.currentTimeMillis() - baslangic_zamani;
 		PSOScreen.instance().pso_set_current_percent(100);
 		Algorithms.localSearch(problem, global_best_order,new int[problem.getBoyutSayisi()]);
+		
+		System.out.println("sonuçlar");
+		for (int i = 0; i < particles.length; i++) {
+			particles[i].degerleri_goster(""+i+">");
+		}
+		
 		stop = true;
 	}
 	private void calculate_global_best(int step){

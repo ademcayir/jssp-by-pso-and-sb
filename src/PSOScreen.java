@@ -312,13 +312,6 @@ public class PSOScreen extends JApplet {
 		g.gridy = 9;
 		g.fill = GridBagConstraints.HORIZONTAL;
 		ayarlar.add(cozum_yontemi,g);
-		cozum_yontemi.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED){
-					problem_isimlerini_tekrar_belirle();
-				}
-			}
-		});
 		
 		g = new GridBagConstraints();
 		g.gridx = 0;
@@ -376,7 +369,7 @@ public class PSOScreen extends JApplet {
 		deneme_sayisi.addItem(new ComboItem("5 Deneme",5));
 		deneme_sayisi.addItem(new ComboItem("10 Deneme",10));
 		deneme_sayisi.addItem(new ComboItem("20 Deneme",20));
-		deneme_sayisi.setSelectedIndex(1);
+		deneme_sayisi.setSelectedIndex(0);
 		
 		g = new GridBagConstraints();
 		g.gridx = 0;
@@ -486,6 +479,7 @@ public class PSOScreen extends JApplet {
 		PSO.instance().setParcacik_sayisi(((ComboItem)parcacik_sayisi.getSelectedItem()).option);
 		PSO.instance().setZaman_kisiti(((ComboItem)zaman_kisiti.getSelectedItem()).option);
 		PSO.instance().setDenemeSayisi(((ComboItem)deneme_sayisi.getSelectedItem()).option);
+		PSO.instance().setCozumYontemi(((ComboItem)cozum_yontemi.getSelectedItem()).option);
 	}
 	class ComboItem {
 		String lbl;

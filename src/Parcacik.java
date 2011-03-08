@@ -52,24 +52,23 @@ class Particle {
 		
 		Algorithms.apply_SPV("nextMove",x,is_sirasi);
 		Algorithms.localSearch(problem, is_sirasi,makine_sirasi);
-//		Algorithms.apply_SB(problem, is_sirasi,makine_sirasi, x,v);
 		int current_tft = problem.yayilma_zamani;
 		if (current_tft < best_x_tft){
-			System.out.println("best x degistii");
 			best_x_tft = current_tft;
 			System.arraycopy(x, 0, best_x, 0, x.length);
 			System.arraycopy(is_sirasi, 0, best_order, 0, is_sirasi.length);
+			
+			if (PSO.instance().getCozumYontemi() == PSO.PSO_SB){
+				Algorithms.apply_SB(problem, is_sirasi,makine_sirasi, x,v);
+			}
 		}
 	}
 	public void degerleri_goster(String label){
-		System.out.print(label+">");
-		for (int i = 0; i < x.length; i++) {
-			System.out.print(" x["+i+"]="+x[i]);
-		}
-		System.out.println(label+">");
-		for (int i = 0; i < x.length; i++) {
-			System.out.print(" v["+i+"]="+v[i]);
-		}
-		System.out.println();
+		System.out.println("Particle: "+label);
+		System.out.println("best tft >"+best_x_tft);
+		System.out.println("last x >"+Algorithms.getArrayString(x));
+		System.out.println("last v >"+Algorithms.getArrayString(v));
+		System.out.println("best x >"+Algorithms.getArrayString(best_x));
+		System.out.println("best order >"+Algorithms.getArrayString(best_order));
 	}
 }

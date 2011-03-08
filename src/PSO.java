@@ -4,6 +4,9 @@ import java.io.InputStream;
 
 public class PSO {
 	private static PSO instance;
+	public static final int PSO = 0;
+	public static final int PSO_SB = 1;
+	public static final int YBS = 2;
 	public static PSO instance(){
 		if (instance == null){
 			instance = new PSO();
@@ -11,6 +14,7 @@ public class PSO {
 		return instance;
 	}
 	private boolean dosyaya_yaz;
+	private int cozum_yontemi;
 	private int problem_index;
 	private int max_iterasyon;
 	private int parcacik_sayisi;
@@ -24,6 +28,9 @@ public class PSO {
 	public void setProblemIndex(int index){
 		problem_index = index;
 	}
+	public void setCozumYontemi(int yontem){
+		this.cozum_yontemi = yontem;
+	}
 	public void setMaksimum_iterasyon(int index){
 		max_iterasyon = index;
 	}
@@ -35,6 +42,9 @@ public class PSO {
 	}
 	public void setDenemeSayisi(int deneme){
 		deneme_sayisi = deneme;
+	}
+	public int getCozumYontemi(){
+		return cozum_yontemi;
 	}
 	public void baslat(){
 		if (!running){
