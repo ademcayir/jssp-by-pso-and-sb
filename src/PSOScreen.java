@@ -37,6 +37,7 @@ public class PSOScreen extends JApplet {
 	private JComboBox iterasyon_sayisi ;
 	private JComboBox deneme_sayisi;
 	private JButton coz;
+	private JButton benchmark;
 	private JLabel makespan;
 	private JLabel current_iterasyon_sayisi;
 	private JLabel current_time;
@@ -108,6 +109,15 @@ public class PSOScreen extends JApplet {
 				durdur.setEnabled(true);
 			}
 		});
+		benchmark = new JButton("Benchmark");
+		benchmark.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				set_pso();
+				PSO.instance().benchmark();
+			}
+		});
+		
+		
 		durdur.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PSO.instance().durdur();
@@ -135,6 +145,12 @@ public class PSOScreen extends JApplet {
 		
 		g = new GridBagConstraints();
 		g.gridx = 2;
+		g.gridy = 0;
+		g.weightx = 1;
+		yonetim.add(benchmark,g);
+		
+		g = new GridBagConstraints();
+		g.gridx = 3;
 		g.gridy = 0;
 		g.weightx = 1;
 		yonetim.add(cozum_kumesi,g);

@@ -11,6 +11,7 @@ public class Problem {
 	public int is_sayisi;
 	public int yayilma_zamani;
 	public long en_iyi_cozum_zamani;
+	public long en_iyi_cozum_iterasyon_sayisi;
 	public Problem(){
 	}
 	public int getBoyutSayisi(){

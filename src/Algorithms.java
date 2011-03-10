@@ -183,11 +183,9 @@ public class Algorithms {
 		int makine_sirasi_temp[] = clone(makine_sirasi);
 		double x_temp[] = clone(x);
 		double v_temp[] = clone(v);
-		System.out.println("--");
-		for (int k = 0; k < problem.makine_sayisi;k++){
+		for (int k = 0; k < problem.makine_sayisi/2;k++){
 			int bottleneck = findBotteneck(problem, is_sirasi,temp_makine_list);
 			temp_makine_list[bottleneck] = true;
-			System.out.println("bottleneck:"+bottleneck);
 			int start = 0;
 			int end = 0;
 			int yayilma_zamani = problem.yayilma_zamani;
@@ -284,10 +282,13 @@ public class Algorithms {
 	}
 	
 	public static String getArrayString(double array[]){
+		return getArrayString(array,5);
+	}
+	public static String getArrayString(double array[],int hassasiyet){
 		StringBuffer buf = new StringBuffer();
 		buf.append('[');
 		for (int i = 0; i < array.length; i++) {
-			buf.append(doubleToString(array[i]));
+			buf.append(doubleToString(array[i],hassasiyet));
 			if(array.length != i + 1){
 				buf.append(',');
 			}
@@ -295,15 +296,18 @@ public class Algorithms {
 		buf.append(']');
 		return buf.toString();
 	}
-	public static String doubleToString(double d){
+	public static String doubleToString(double d,int hassasiyet){
+		if (hassasiyet == -1){
+			return ""+d;
+		}
 		String s = ""+d;
 		if (d >= 0){
 			s = "+"+s;
 		}
-		while (s.length() < 5){
+		while (s.length() < hassasiyet){
 			s += "0";
 		}
-		return s.substring(0,5);
+		return s.substring(0,hassasiyet);
 	}
 	public static String getArrayString(int array[]){
 		StringBuffer buf = new StringBuffer();
